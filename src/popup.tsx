@@ -6,6 +6,8 @@ const Popup = () => {
   const [currentURL, setCurrentURL] = useState<string>();
   const [currentDatetime, setCurrentDatetime] = useState<Date>(new Date());
   const [isDarkModeEnabled, setIsDarkModeEnabled] = useState<boolean>(false);
+  const [isMakePremiumEnabled, setIsMakePremiumEnabled] =
+    useState<boolean>(false);
   const [isLightsEnabled, setIsLightsEnabled] = useState<boolean>(false);
 
   useEffect(() => {
@@ -48,6 +50,24 @@ const Popup = () => {
       if (tab.id) {
         chrome.tabs.sendMessage(tab.id, {
           type: "darkMode",
+          enable: newState,
+        });
+      }
+    });
+  };
+
+  const handlePremiumChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // Update state and save to Chrome storage
+    const newState = event.target.checked;
+    setIsMakePremiumEnabled(newState);
+    chrome.storage.sync.set({ makePremium: newState });
+
+    // Send message to content script
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      const tab = tabs[0];
+      if (tab.id) {
+        chrome.tabs.sendMessage(tab.id, {
+          type: "makePremium",
           enable: newState,
         });
       }
@@ -122,6 +142,15 @@ const Popup = () => {
             onChange={handleModeChange}
           />
           <label htmlFor="darkModeEnabledCheckbox"> Enable dark mode</label>
+        </div>
+        <div>
+          <input
+            type="checkbox"
+            id="makePremiumEnabledCheckbox"
+            checked={isMakePremiumEnabled}
+            onChange={handlePremiumChange}
+          />
+          <label htmlFor="makePremiumEnabledCheckbox"> Make premium</label>
         </div>
         <div>
           <button onClick={addBionicReading}> Enable bionic reading</button>
