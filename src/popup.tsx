@@ -18,6 +18,9 @@ const Popup = () => {
     chrome.storage.sync.get(["darkMode"], (result) => {
       setIsDarkModeEnabled(result.darkMode || false);
     });
+    chrome.storage.sync.get(["makePremium"], (result) => {
+      setIsMakePremiumEnabled(result.makePremium || false);
+    });
   }, []);
 
   const handleLightsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -109,51 +112,74 @@ const Popup = () => {
   };
 
   return (
-    <div className="bg-gray-100 p-4 text-base" style={{ width: "500px" }}>
-      <ul>
-        <li className="font-bold">
-          Current URL: <span className="font-normal">{currentURL}</span>
-        </li>
-        <li className="font-bold">
-          Current date and time:{" "}
-          <span className="font-normal">
-            {currentDatetime.toLocaleString()}
+    <div className="bg-gray-100 text-base" style={{ width: "500px" }}>
+      <div className="relative w-full h-24">
+        <div className="absolute inset-0 flex justify-center items-center">
+          <span className="text-5xl font-semibold text-white">
+            Lattice Labs
           </span>
-        </li>
-      </ul>
-      <div className="pt-4">
-        <div>
-          <input
-            type="checkbox"
-            id="lightsEnabledCheckbox"
-            checked={isLightsEnabled}
-            onChange={handleLightsChange}
-          />
-          <label htmlFor="lightsEnabledCheckbox">
-            {" "}
-            Enable Christmas lights
-          </label>
         </div>
-        <div>
-          <input
-            type="checkbox"
-            id="darkModeEnabledCheckbox"
-            checked={isDarkModeEnabled}
-            onChange={handleModeChange}
-          />
-          <label htmlFor="darkModeEnabledCheckbox"> Enable dark mode</label>
+        <div className="flex flex-row h-full">
+          <div
+            style={{ backgroundColor: "#16b8a2" }}
+            className="w-1/3 h-full"
+          ></div>
+          <div
+            style={{ backgroundColor: "#ffb41f" }}
+            className="w-1/3 h-full"
+          ></div>
+          <div
+            style={{ backgroundColor: "#f56358" }}
+            className="w-1/3 h-full"
+          ></div>
         </div>
-        <div>
-          <input
-            type="checkbox"
-            id="makePremiumEnabledCheckbox"
-            checked={isMakePremiumEnabled}
-            onChange={handlePremiumChange}
-          />
-          <label htmlFor="makePremiumEnabledCheckbox"> Make premium</label>
-        </div>
-        <div>
-          <button onClick={addBionicReading}> Enable bionic reading</button>
+      </div>
+      <div className="p-4">
+        <ul>
+          <li className="font-bold">
+            Current URL: <span className="font-normal">{currentURL}</span>
+          </li>
+          <li className="font-bold">
+            Current date and time:{" "}
+            <span className="font-normal">
+              {currentDatetime.toLocaleString()}
+            </span>
+          </li>
+        </ul>
+        <div className="pt-4">
+          <div>
+            <input
+              type="checkbox"
+              id="lightsEnabledCheckbox"
+              checked={isLightsEnabled}
+              onChange={handleLightsChange}
+            />
+            <label htmlFor="lightsEnabledCheckbox">
+              {" "}
+              Enable Christmas lights
+            </label>
+          </div>
+          <div>
+            <input
+              type="checkbox"
+              id="darkModeEnabledCheckbox"
+              checked={isDarkModeEnabled}
+              onChange={handleModeChange}
+            />
+            <label htmlFor="darkModeEnabledCheckbox"> Enable dark mode</label>
+          </div>
+          <div>
+            <input
+              type="checkbox"
+              id="makePremiumEnabledCheckbox"
+              checked={isMakePremiumEnabled}
+              onChange={handlePremiumChange}
+            />
+            <label htmlFor="makePremiumEnabledCheckbox"> Make premium</label>
+          </div>
+          <div>
+            <button onClick={addBionicReading}> Enable bionic reading</button>
+          </div>
         </div>
       </div>
     </div>
