@@ -10,7 +10,7 @@ export function applyDarkMode() {
   const darkModeStyle = `
     /* overall background */
     #__next > div > div > div > div > div > div > div {
-        background-color: #121212 !important;
+        background: linear-gradient(to bottom, #121212 40%, #1a1444 70%, #593DBA 100%) !important;
         color: #FFFFFF !important;
     } 
 

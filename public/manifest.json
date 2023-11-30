@@ -26,7 +26,11 @@
   
   "web_accessible_resources": [
     {
-      "resources": ["santa_hat_smaller.png"],
+      "resources": [
+        "santa_hat_smaller.png",
+        "rainbow-sparkles.gif",
+        "sparkles-yellow.gif"
+      ],
       "matches": ["<all_urls>"]
     }
   ],

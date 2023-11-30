@@ -9,20 +9,10 @@ export function toggleMakePremium(enable: boolean) {
 }
 
 export function applyMakePremium() {
-  const xpath =
-    "/html/body/div[2]/div/div/div/div/div[2]/div/div/div[1]/div[1]/div[1]/div/button/div";
-  const element = findElementByXPath(xpath);
-  addPremiumSparklesToElement(element, 10);
-
-  const xpath2 =
-    "/html/body/div[2]/div/div/div/div/div[2]/div/nav/div[3]/button/div/div/div/div/div/div/div[1]";
-  const element2 = findElementByXPath(xpath2);
-  addPremiumSparklesToElement(element2);
-
-  const xpath3 =
-    "/html/body/div[2]/div/div/div/div/div[2]/div/div/div[1]/div[2]/div[2]/div/div[1]/div[1]/a[2]/div/div";
-  const element3 = findElementByXPath(xpath3);
-  addPremiumSparklesToElement(element3);
+  const buttonsContainerXPath =
+    "/html/body/div[1]/div/div/div/div/div[2]/div/div/div[1]/div[1]/div[2]/div";
+  const buttonsContainer = findElementByXPath(buttonsContainerXPath);
+  addPremiumSparklesToElement(buttonsContainer);
 }
 
 export function removeMakePremium() {
@@ -32,19 +22,25 @@ export function removeMakePremium() {
   }
 }
 
-const addPremiumSparklesToElement = (element: any, offsetRight: number = 0) => {
+const addPremiumSparklesToElement = (
+  element: any,
+  topOffset: number = -10,
+  rightOffset: number = -20,
+  width: number = 70,
+  height: number = 70
+) => {
   if (!element) return;
 
-  const santaHatImg = document.createElement("img");
-  santaHatImg.id = "santa-hat";
-  santaHatImg.src = chrome.runtime.getURL("santa_hat_smaller.png");
-  santaHatImg.style.position = "absolute";
-  santaHatImg.style.top = "-10px";
-  santaHatImg.style.right = offsetRight + "px";
-  santaHatImg.style.width = "auto"; // Adjust size as needed
-  santaHatImg.style.height = "auto";
-  santaHatImg.style.zIndex = "1000";
+  const sparklesGif = document.createElement("img");
+  sparklesGif.id = "premium-sparkles";
+  sparklesGif.src = chrome.runtime.getURL("rainbow-sparkles.gif");
+  sparklesGif.style.position = "absolute";
+  sparklesGif.style.top = topOffset + "px";
+  sparklesGif.style.right = rightOffset + "px";
+  sparklesGif.style.width = width + "px";
+  sparklesGif.style.height = height + "px";
+  sparklesGif.style.zIndex = "1000";
 
   element.style.position = "relative";
-  element.appendChild(santaHatImg);
+  element.appendChild(sparklesGif);
 };
