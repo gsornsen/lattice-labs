@@ -1,0 +1,44 @@
+
+
+
+.falling-leaf {
+    position: fixed;
+    top: -10px;
+    z-index: 9999;
+    opacity: 0.8;
+    clip-path: polygon(
+      50% 0%,
+      75% 30%,
+      100% 40%,
+      90% 70%,
+      100% 100%,
+      50% 80%,
+      0% 100%,
+      10% 70%,
+      0% 40%,
+      25% 30%
+    );
+  
+    border-radius: 0%;
+    animation: falling-leaf linear infinite;
+  }
+  
+  @keyframes falling-leaf {
+    0% {
+      /* Starting position */
+      top: -10px;
+      left: calc(100% * var(--random-left, 0));
+      transform: rotate(-15deg); /* Slight initial rotation */
+    }
+    50% {
+      /* Middle position - slight sway back and forth */
+      transform: rotate(15deg); /* Opposite rotation */
+    }
+    100% {
+      /* Ending position */
+      top: 100%;
+      left: calc(5vw + 100% * var(--random-left, 0));
+      transform: rotate(15deg); /* Final rotation */
+    }
+  }
+  

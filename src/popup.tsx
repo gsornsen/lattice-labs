@@ -13,16 +13,18 @@ const Popup = () => {
   const [isMakePremiumEnabled, setIsMakePremiumEnabled] =
     useState<boolean>(false);
   const [isLightsEnabled, setIsLightsEnabled] = useState<boolean>(false);
+  const [isSpookySeasonEnabled, setIsSpookySeasonEnabled] = useState<boolean>(false);
 
   // On component mount, load the saved state
   useEffect(() => {
     chrome.storage.sync.get(
-      ["christmasLights", "darkMode", "makePremium"],
+      ["christmasLights", "darkMode", "makePremium", "spookySeason"],
       (result) => {
         console.log(result);
         setIsLightsEnabled(result.christmasLights ?? false);
         setIsDarkModeEnabled(result.darkMode ?? false);
         setIsMakePremiumEnabled(result.makePremium ?? false);
+        setIsSpookySeasonEnabled(result.spookySeason ?? false);
       }
     );
   }, []);
@@ -43,8 +45,26 @@ const Popup = () => {
     });
   }, []);
 
+  const handleSpookySeasonChange = () => {
+    setIsSpookySeasonEnabled((prevState) => {
+      const newState = !prevState;
+      chrome.storage.sync.set({ spookySeason: newState });
+
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        const tab = tabs[0];
+        if (tab.id) {
+          chrome.tabs.sendMessage(tab.id, {
+            type: "spookySeason",
+            enable: newState,
+          });
+        }
+      });
+      return newState;
+    });
+  };
+
   const handleLightsChange = () => {
-    setIsLightsEnabled((prevState) => {
+    setIsSpookySeasonEnabled((prevState) => {
       const newState = !prevState;
       chrome.storage.sync.set({ christmasLights: newState });
 
@@ -104,8 +124,8 @@ const Popup = () => {
           tab.id,
           { action: "addBionicReading" },
           function (response) {
-            console.log(response);
-          }
+          console.log(response);
+        }
         );
       }
     });
