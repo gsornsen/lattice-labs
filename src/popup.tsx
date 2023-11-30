@@ -3,6 +3,8 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import { BsTree } from "react-icons/bs";
 import { BsFillTreeFill } from "react-icons/bs";
+import { PiMoonStarsBold } from "react-icons/pi";
+import { PiMoonStarsFill } from "react-icons/pi";
 
 const Popup = () => {
   const [currentURL, setCurrentURL] = useState<string>();
@@ -43,7 +45,8 @@ const Popup = () => {
     });
   }, []);
 
-  // Saving to Chrome storage and sending message to content script for Christmas lights
+  // Christmas lights
+  // Saving to Chrome storage and sending message to content script
   useEffect(() => {
     chrome.storage.sync.set({ christmasLights: isLightsEnabled });
 
@@ -58,24 +61,28 @@ const Popup = () => {
     });
   }, [isLightsEnabled]);
 
-  const handleLightsChange = () => {
-    setIsLightsEnabled(!isLightsEnabled);
-  };
-
-  const handleModeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newState = event.target.checked;
-    setIsDarkModeEnabled(newState);
-    chrome.storage.sync.set({ darkMode: newState });
+  // Dark mode
+  // Saving to Chrome storage and sending message to content script
+  useEffect(() => {
+    chrome.storage.sync.set({ darkMode: isDarkModeEnabled });
 
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       const tab = tabs[0];
       if (tab.id) {
         chrome.tabs.sendMessage(tab.id, {
           type: "darkMode",
-          enable: newState,
+          enable: isDarkModeEnabled,
         });
       }
     });
+  }, [isDarkModeEnabled]);
+
+  const handleLightsChange = () => {
+    setIsLightsEnabled(!isLightsEnabled);
+  };
+
+  const handleModeChange = () => {
+    setIsDarkModeEnabled(!isDarkModeEnabled);
   };
 
   const handlePremiumChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -145,14 +152,14 @@ const Popup = () => {
           </li>
         </ul>
         <div className="pt-4">
-          <div>
+          <div className="my-1">
             <button
               onClick={handleLightsChange}
-              className={`flex flex-row items-center bg-gradient-to-r ${
+              className={`flex flex-row font-medium items-center bg-gradient-to-r ${
                 !isLightsEnabled
                   ? "from-slate-200 to-slate-500"
-                  : "from-emerald-300 to-emerald-700 text-emerald-800"
-              } rounded-md py-1 px-2 hover:bg-gradient-to-r hover:from-emerald-300 hover:to-emerald-700 hover:text-white hover:border-emerald-700`}
+                  : "from-emerald-300 to-emerald-700 text-emerald-950"
+              } rounded-md py-1 px-2 hover:bg-gradient-to-r hover:from-emerald-300 hover:to-emerald-700 hover:text-white`}
             >
               {!isLightsEnabled ? (
                 <BsTree className="mr-1" />
@@ -162,14 +169,22 @@ const Popup = () => {
               Christmas lights
             </button>
           </div>
-          <div>
-            <input
-              type="checkbox"
-              id="darkModeEnabledCheckbox"
-              checked={isDarkModeEnabled}
-              onChange={handleModeChange}
-            />
-            <label htmlFor="darkModeEnabledCheckbox"> Enable dark mode</label>
+          <div className="my-1">
+            <button
+              onClick={handleModeChange}
+              className={`flex flex-row font-medium items-center bg-gradient-to-r ${
+                !isDarkModeEnabled
+                  ? "from-slate-200 to-slate-500"
+                  : "from-fuchsia-600 to-purple-800 text-fuchsia-950"
+              } rounded-md py-1 px-2 hover:bg-gradient-to-r hover:from-fuchsia-600 hover:to-purple-800 hover:text-white`}
+            >
+              {!isDarkModeEnabled ? (
+                <PiMoonStarsBold className="mr-1" />
+              ) : (
+                <PiMoonStarsFill className="mr-1" />
+              )}
+              Dark mode
+            </button>
           </div>
           <div>
             <input
