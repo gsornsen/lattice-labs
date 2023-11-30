@@ -5,16 +5,20 @@ import "./index.css";
 const Popup = () => {
   const [currentURL, setCurrentURL] = useState<string>();
   const [currentDatetime, setCurrentDatetime] = useState<Date>(new Date());
-  const [isLightsEnabled, setIsLightsEnabled] = useState(false);
+  const [isDarkModeEnabled, setIsDarkModeEnabled] = useState<boolean>(false);
+  const [isLightsEnabled, setIsLightsEnabled] = useState<boolean>(false);
 
   useEffect(() => {
     // On component mount, load the saved state
-    chrome.storage.sync.get(['christmasLights'], (result) => {
+    chrome.storage.sync.get(["christmasLights"], (result) => {
       setIsLightsEnabled(result.christmasLights || false);
+    });
+    chrome.storage.sync.get(["darkMode"], (result) => {
+      setIsDarkModeEnabled(result.darkMode || false);
     });
   }, []);
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLightsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     // Update state and save to Chrome storage
     const newState = event.target.checked;
     setIsLightsEnabled(newState);
@@ -26,7 +30,25 @@ const Popup = () => {
       if (tab.id) {
         chrome.tabs.sendMessage(tab.id, {
           type: "christmasLights",
-          enable: newState
+          enable: newState,
+        });
+      }
+    });
+  };
+
+  const handleModeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // Update state and save to Chrome storage
+    const newState = event.target.checked;
+    setIsDarkModeEnabled(newState);
+    chrome.storage.sync.set({ darkMode: newState });
+
+    // Send message to content script
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      const tab = tabs[0];
+      if (tab.id) {
+        chrome.tabs.sendMessage(tab.id, {
+          type: "darkMode",
+          enable: newState,
         });
       }
     });
@@ -85,12 +107,21 @@ const Popup = () => {
             type="checkbox"
             id="lightsEnabledCheckbox"
             checked={isLightsEnabled}
-            onChange={handleChange}
+            onChange={handleLightsChange}
           />
           <label htmlFor="lightsEnabledCheckbox">
             {" "}
             Enable Christmas lights
           </label>
+        </div>
+        <div>
+          <input
+            type="checkbox"
+            id="darkModeEnabledCheckbox"
+            checked={isDarkModeEnabled}
+            onChange={handleModeChange}
+          />
+          <label htmlFor="darkModeEnabledCheckbox"> Enable dark mode</label>
         </div>
         <div>
           <button onClick={addBionicReading}> Enable bionic reading</button>
