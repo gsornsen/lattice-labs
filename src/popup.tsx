@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
+import "./index.css";
 
 const Popup = () => {
-  const [count, setCount] = useState(0);
   const [currentURL, setCurrentURL] = useState<string>();
+  const [currentDatetime, setCurrentDatetime] = useState<Date>(new Date());
   const [isLightsEnabled, setIsLightsEnabled] = useState(false);
 
   useEffect(() => {
@@ -32,8 +33,17 @@ const Popup = () => {
   };
 
   useEffect(() => {
-    chrome.action.setBadgeText({ text: count.toString() });
-  }, [count]);
+    // Function to update the date and time
+    const tick = () => {
+      setCurrentDatetime(new Date());
+    };
+
+    // Set up an interval to call the tick function every second
+    const intervalId = setInterval(tick, 1000);
+
+    // Clear the interval when the component unmounts
+    return () => clearInterval(intervalId);
+  }, []);
 
   useEffect(() => {
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
@@ -41,70 +51,52 @@ const Popup = () => {
     });
   }, []);
 
-  const changeBackground = () => {
+  const addBionicReading = () => {
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
       const tab = tabs[0];
       if (tab.id) {
         chrome.tabs.sendMessage(
           tab.id,
-          {
-            type: 'changeBackground',
-            color: "#555555",
-          },
-          (msg) => {
-            console.log("result message:", msg);
+          { action: "addBionicReading" },
+          function (response) {
+            console.log(response);
           }
         );
       }
     });
   };
 
-  const addLights = () => {
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      const tab = tabs[0];
-      if (tab.id) {
-        chrome.tabs.sendMessage(tab.id, { action: 'activateChristmasLights' }, function (response) {
-          console.log(response);
-        });
-      }
-    });
-  };
-
-  const addBionicReading = () => {
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      const tab = tabs[0];
-      if (tab.id) {
-        chrome.tabs.sendMessage(tab.id, { action: 'addBionicReading' }, function (response) {
-          console.log(response);
-        });
-      }
-    });
-  };
-
-
   return (
-    <>
-      <ul style={{ minWidth: "700px" }}>
-        <li>Current URL: {currentURL}</li>
-        <li>Current Time: {new Date().toLocaleTimeString()}</li>
+    <div className="bg-gray-100 p-4 text-base" style={{ width: "500px" }}>
+      <ul>
+        <li className="font-bold">
+          Current URL: <span className="font-normal">{currentURL}</span>
+        </li>
+        <li className="font-bold">
+          Current date and time:{" "}
+          <span className="font-normal">
+            {currentDatetime.toLocaleString()}
+          </span>
+        </li>
       </ul>
-      <button
-        onClick={() => setCount(count + 1)}
-        style={{ marginRight: "5px" }}
-      >
-        count up
-      </button>
-      <button onClick={changeBackground}>change background</button>
-      <input
-        type="checkbox"
-        id="lightsEnabledCheckbox"
-        checked={isLightsEnabled}
-        onChange={handleChange}
-      />
-      <label htmlFor="lightsEnabledCheckbox">Enable Christmas Lights</label>
-      <button onClick={addLights}>add lights</button>
-      <button onClick={addBionicReading}>add bionic reading</button>
-    </>
+      <div className="pt-4">
+        <div>
+          <input
+            type="checkbox"
+            id="lightsEnabledCheckbox"
+            checked={isLightsEnabled}
+            onChange={handleChange}
+          />
+          <label htmlFor="lightsEnabledCheckbox">
+            {" "}
+            Enable Christmas lights
+          </label>
+        </div>
+        <div>
+          <button onClick={addBionicReading}> Enable bionic reading</button>
+        </div>
+      </div>
+    </div>
   );
 };
 
