@@ -64,7 +64,7 @@ const Popup = () => {
   };
 
   const handleLightsChange = () => {
-    setIsSpookySeasonEnabled((prevState) => {
+    setIsLightsEnabled((prevState) => {
       const newState = !prevState;
       chrome.storage.sync.set({ christmasLights: newState });
 
@@ -185,6 +185,23 @@ const Popup = () => {
                 <BsFillTreeFill className="mr-1" />
               )}
               Christmas lights
+            </button>
+          </div>
+          <div className="my-1">
+            <button
+              onClick={handleSpookySeasonChange}
+              className={`flex flex-row font-medium items-center bg-gradient-to-r ${
+                !isSpookySeasonEnabled
+                  ? "from-slate-200 to-slate-500"
+                  : "from-emerald-300 to-emerald-700 text-emerald-950"
+              } rounded-md py-1 px-2 hover:bg-gradient-to-r hover:from-emerald-300 hover:to-emerald-700 hover:text-white`}
+            >
+              {!isSpookySeasonEnabled ? (
+                <BsTree className="mr-1" />
+              ) : (
+                <BsFillTreeFill className="mr-1" />
+              )}
+              Spooky season
             </button>
           </div>
           <div className="my-1">
