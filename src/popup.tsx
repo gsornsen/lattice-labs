@@ -112,7 +112,10 @@ const Popup = () => {
   };
 
   return (
-    <div className="bg-gray-100 text-base" style={{ width: "500px" }}>
+    <div
+      className="bg-gray-100 text-base font-quicksand"
+      style={{ width: "500px" }}
+    >
       <div className="relative w-full h-24">
         <div className="absolute inset-0 flex justify-center items-center">
           <span className="text-5xl font-semibold text-white">
