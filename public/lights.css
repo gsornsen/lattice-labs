@@ -5,30 +5,32 @@
   right: 0;
   z-index: 9999;
   display: flex;
-  justify-content: center;
+  justify-content: space-around; /* Adjusts the spacing */
 }
 
 .christmas-light {
-  width: 15px; /* Adjusted for elongated shape */
-  height: 30px; /* Adjusted for elongated shape */
-  border-radius: 50% 50% 50% 0; /* Rounded point at the bottom */
-  margin: 5px;
-  position: relative; /* Needed for the positioning of the cap */
+  width: 10px;
+  height: 20px;
+  margin: 5px 5px; /* Increased horizontal margin */
+  position: relative;
   animation: blink 1s infinite;
   animation-timing-function: step-start;
-  border: 1px solid; /* Border for depth */
+  border: 1px solid;
+  background-clip: content-box;
+  border-radius: 50% 50% 70% 70% / 50% 50% 60% 60%;
 }
 
 .christmas-light::before {
   content: '';
   position: absolute;
-  top: -5px; /* Adjust as needed */
-  left: 3px; /* Centering the cap */
-  width: 9px; /* Width of the cap */
-  height: 5px; /* Height of the cap */
-  background-color: green; /* Cap color */
-  border-radius: 50%;
+  top: -5px;
+  left: 2px;
+  width: 4px;
+  height: 4px;
+  background-color: green;
+  border-radius: 20%;
 }
+
 /* Red Light */
 .red-light {
   background: linear-gradient(to bottom, #ff4747, #ff0000);

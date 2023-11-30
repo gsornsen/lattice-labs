@@ -26,17 +26,21 @@ export function addChristmasLights() {
   // Calculate the number of lights based on the viewport width
   const numberOfLights: number = Math.floor(window.innerWidth / 30); // Adjust 30 based on light size + margin
 
-  // Add lights to the container with different colors and random blink delays
-  for (let i = 0; i < numberOfLights; i++) {
-    const light: HTMLDivElement = document.createElement("div");
+// Add lights to the container with different colors and random blink delays
+for (let i = 0; i < numberOfLights; i++) {
+    const light = document.createElement("div");
     light.className = "christmas-light " + colors[i % colors.length];
 
     // Set a random animation delay for each light to blink at different times
-    const blinkDelay: number = Math.random() * 5; // up to 5 seconds delay
+    const blinkDelay = Math.random() * 20; // up to 5 seconds delay
     light.style.animationDelay = `${blinkDelay}s`;
 
+    // Set a random rotation for each light to create a dangling effect
+    const rotationDegree = (Math.random() - 0.5) * 20; // Random rotation between -10 and +10 degrees
+    light.style.transform = `rotate(${rotationDegree}deg)`;
+
     lightsContainer.appendChild(light);
-  }
+}
 
   createSnowflakes();
   addHats();
