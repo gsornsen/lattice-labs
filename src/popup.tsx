@@ -5,6 +5,8 @@ import { BsTree } from "react-icons/bs";
 import { BsFillTreeFill } from "react-icons/bs";
 import { PiMoonStarsBold } from "react-icons/pi";
 import { PiMoonStarsFill } from "react-icons/pi";
+import { PiFlower } from "react-icons/pi";
+import { PiFlowerFill } from "react-icons/pi";
 
 const Popup = () => {
   const [currentURL, setCurrentURL] = useState<string>();
@@ -13,14 +15,16 @@ const Popup = () => {
   const [isMakePremiumEnabled, setIsMakePremiumEnabled] =
     useState<boolean>(false);
   const [isLightsEnabled, setIsLightsEnabled] = useState<boolean>(false);
+  const [isSpringEnabled, setIsSpringEnabled] = useState<boolean>(false);
 
   // On component mount, load the saved state
   useEffect(() => {
     chrome.storage.sync.get(
-      ["christmasLights", "darkMode", "makePremium"],
+      ["christmasLights", "darkMode", "makePremium", "springFlowers"],
       (result) => {
         console.log(result);
         setIsLightsEnabled(result.christmasLights ?? false);
+        setIsSpringEnabled(result.springFlowers ?? false);
         setIsDarkModeEnabled(result.darkMode ?? false);
         setIsMakePremiumEnabled(result.makePremium ?? false);
       }
@@ -53,6 +57,24 @@ const Popup = () => {
         if (tab.id) {
           chrome.tabs.sendMessage(tab.id, {
             type: "christmasLights",
+            enable: newState,
+          });
+        }
+      });
+      return newState;
+    });
+  };
+
+  const handleSpringChange = () => {
+    setIsSpringEnabled((prevState) => {
+      const newState = !prevState;
+      chrome.storage.sync.set({ springFlowers: newState });
+
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        const tab = tabs[0];
+        if (tab.id) {
+          chrome.tabs.sendMessage(tab.id, {
+            type: "springFlowers",
             enable: newState,
           });
         }
@@ -165,6 +187,23 @@ const Popup = () => {
                 <BsFillTreeFill className="mr-1" />
               )}
               Christmas lights
+            </button>
+          </div>
+          <div className="my-1">
+            <button
+              onClick={handleSpringChange}
+              className={`flex flex-row font-medium items-center bg-gradient-to-r ${
+                !isSpringEnabled
+                  ? "from-slate-200 to-slate-500"
+                  : "from-lime-300 to-lime-700 text-teal-950"
+              } rounded-md py-1 px-2 hover:bg-gradient-to-r hover:from-lime-300 hover:to-lime-700 hover:text-white`}
+            >
+              {!isSpringEnabled ? (
+                <PiFlower className="mr-1" />
+              ) : (
+                <PiFlowerFill className="mr-1" />
+              )}
+              Spring flowers
             </button>
           </div>
           <div className="my-1">
