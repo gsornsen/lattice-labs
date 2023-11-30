@@ -16,17 +16,15 @@ const Popup = () => {
 
   // On component mount, load the saved state
   useEffect(() => {
-    chrome.storage.sync.get(["christmasLights"], (result) => {
-      console.log("was results.christmasLights true? ", result.christmasLights);
-      setIsLightsEnabled(result.christmasLights || false);
-    });
-    console.log("is lights enabled? in useEffect: ", isLightsEnabled);
-    chrome.storage.sync.get(["darkMode"], (result) => {
-      setIsDarkModeEnabled(result.darkMode || false);
-    });
-    chrome.storage.sync.get(["makePremium"], (result) => {
-      setIsMakePremiumEnabled(result.makePremium || false);
-    });
+    chrome.storage.sync.get(
+      ["christmasLights", "darkMode", "makePremium"],
+      (result) => {
+        console.log(result);
+        setIsLightsEnabled(result.christmasLights ?? false);
+        setIsDarkModeEnabled(result.darkMode ?? false);
+        setIsMakePremiumEnabled(result.makePremium ?? false);
+      }
+    );
   }, []);
 
   // Update the date and time every second
@@ -38,51 +36,41 @@ const Popup = () => {
     return () => clearInterval(intervalId);
   }, []);
 
-  // Get the current URL
-  useEffect(() => {
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      setCurrentURL(tabs[0].url);
-    });
-  }, []);
-
-  // Christmas lights
-  // Saving to Chrome storage and sending message to content script
-  useEffect(() => {
-    chrome.storage.sync.set({ christmasLights: isLightsEnabled });
-
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      const tab = tabs[0];
-      if (tab.id) {
-        chrome.tabs.sendMessage(tab.id, {
-          type: "christmasLights",
-          enable: isLightsEnabled,
-        });
-      }
-    });
-  }, [isLightsEnabled]);
-
-  // Dark mode
-  // Saving to Chrome storage and sending message to content script
-  useEffect(() => {
-    chrome.storage.sync.set({ darkMode: isDarkModeEnabled });
-
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      const tab = tabs[0];
-      if (tab.id) {
-        chrome.tabs.sendMessage(tab.id, {
-          type: "darkMode",
-          enable: isDarkModeEnabled,
-        });
-      }
-    });
-  }, [isDarkModeEnabled]);
-
   const handleLightsChange = () => {
-    setIsLightsEnabled(!isLightsEnabled);
+    setIsLightsEnabled((prevState) => {
+      const newState = !prevState;
+      chrome.storage.sync.set({ christmasLights: newState });
+
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        const tab = tabs[0];
+        if (tab.id) {
+          chrome.tabs.sendMessage(tab.id, {
+            type: "christmasLights",
+            enable: newState,
+          });
+        }
+      });
+      return newState;
+    });
   };
 
   const handleModeChange = () => {
-    setIsDarkModeEnabled(!isDarkModeEnabled);
+    setIsDarkModeEnabled((prevState) => {
+      const newState = !prevState;
+      chrome.storage.sync.set({ darkMode: newState });
+
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        const tab = tabs[0];
+        if (tab.id) {
+          chrome.tabs.sendMessage(tab.id, {
+            type: "darkMode",
+            enable: newState,
+          });
+        }
+      });
+
+      return newState;
+    });
   };
 
   const handlePremiumChange = (event: React.ChangeEvent<HTMLInputElement>) => {
