@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
+import { BsTree } from "react-icons/bs";
+import { BsFillTreeFill } from "react-icons/bs";
+import { PiMoonStarsBold } from "react-icons/pi";
+import { PiMoonStarsFill } from "react-icons/pi";
 
 const Popup = () => {
   const [currentURL, setCurrentURL] = useState<string>();
@@ -10,11 +14,13 @@ const Popup = () => {
     useState<boolean>(false);
   const [isLightsEnabled, setIsLightsEnabled] = useState<boolean>(false);
 
+  // On component mount, load the saved state
   useEffect(() => {
-    // On component mount, load the saved state
     chrome.storage.sync.get(["christmasLights"], (result) => {
+      console.log("was results.christmasLights true? ", result.christmasLights);
       setIsLightsEnabled(result.christmasLights || false);
     });
+    console.log("is lights enabled? in useEffect: ", isLightsEnabled);
     chrome.storage.sync.get(["darkMode"], (result) => {
       setIsDarkModeEnabled(result.darkMode || false);
     });
@@ -23,49 +29,67 @@ const Popup = () => {
     });
   }, []);
 
-  const handleLightsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // Update state and save to Chrome storage
-    const newState = event.target.checked;
-    setIsLightsEnabled(newState);
-    chrome.storage.sync.set({ christmasLights: newState });
+  // Update the date and time every second
+  useEffect(() => {
+    const tick = () => {
+      setCurrentDatetime(new Date());
+    };
+    const intervalId = setInterval(tick, 1000);
+    return () => clearInterval(intervalId);
+  }, []);
 
-    // Send message to content script
+  // Get the current URL
+  useEffect(() => {
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      setCurrentURL(tabs[0].url);
+    });
+  }, []);
+
+  // Christmas lights
+  // Saving to Chrome storage and sending message to content script
+  useEffect(() => {
+    chrome.storage.sync.set({ christmasLights: isLightsEnabled });
+
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       const tab = tabs[0];
       if (tab.id) {
         chrome.tabs.sendMessage(tab.id, {
           type: "christmasLights",
-          enable: newState,
+          enable: isLightsEnabled,
         });
       }
     });
-  };
+  }, [isLightsEnabled]);
 
-  const handleModeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // Update state and save to Chrome storage
-    const newState = event.target.checked;
-    setIsDarkModeEnabled(newState);
-    chrome.storage.sync.set({ darkMode: newState });
+  // Dark mode
+  // Saving to Chrome storage and sending message to content script
+  useEffect(() => {
+    chrome.storage.sync.set({ darkMode: isDarkModeEnabled });
 
-    // Send message to content script
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       const tab = tabs[0];
       if (tab.id) {
         chrome.tabs.sendMessage(tab.id, {
           type: "darkMode",
-          enable: newState,
+          enable: isDarkModeEnabled,
         });
       }
     });
+  }, [isDarkModeEnabled]);
+
+  const handleLightsChange = () => {
+    setIsLightsEnabled(!isLightsEnabled);
+  };
+
+  const handleModeChange = () => {
+    setIsDarkModeEnabled(!isDarkModeEnabled);
   };
 
   const handlePremiumChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // Update state and save to Chrome storage
     const newState = event.target.checked;
     setIsMakePremiumEnabled(newState);
     chrome.storage.sync.set({ makePremium: newState });
 
-    // Send message to content script
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       const tab = tabs[0];
       if (tab.id) {
@@ -76,25 +100,6 @@ const Popup = () => {
       }
     });
   };
-
-  useEffect(() => {
-    // Function to update the date and time
-    const tick = () => {
-      setCurrentDatetime(new Date());
-    };
-
-    // Set up an interval to call the tick function every second
-    const intervalId = setInterval(tick, 1000);
-
-    // Clear the interval when the component unmounts
-    return () => clearInterval(intervalId);
-  }, []);
-
-  useEffect(() => {
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      setCurrentURL(tabs[0].url);
-    });
-  }, []);
 
   const addBionicReading = () => {
     chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
@@ -147,26 +152,39 @@ const Popup = () => {
           </li>
         </ul>
         <div className="pt-4">
-          <div>
-            <input
-              type="checkbox"
-              id="lightsEnabledCheckbox"
-              checked={isLightsEnabled}
-              onChange={handleLightsChange}
-            />
-            <label htmlFor="lightsEnabledCheckbox">
-              {" "}
-              Enable Christmas lights
-            </label>
+          <div className="my-1">
+            <button
+              onClick={handleLightsChange}
+              className={`flex flex-row font-medium items-center bg-gradient-to-r ${
+                !isLightsEnabled
+                  ? "from-slate-200 to-slate-500"
+                  : "from-emerald-300 to-emerald-700 text-emerald-950"
+              } rounded-md py-1 px-2 hover:bg-gradient-to-r hover:from-emerald-300 hover:to-emerald-700 hover:text-white`}
+            >
+              {!isLightsEnabled ? (
+                <BsTree className="mr-1" />
+              ) : (
+                <BsFillTreeFill className="mr-1" />
+              )}
+              Christmas lights
+            </button>
           </div>
-          <div>
-            <input
-              type="checkbox"
-              id="darkModeEnabledCheckbox"
-              checked={isDarkModeEnabled}
-              onChange={handleModeChange}
-            />
-            <label htmlFor="darkModeEnabledCheckbox"> Enable dark mode</label>
+          <div className="my-1">
+            <button
+              onClick={handleModeChange}
+              className={`flex flex-row font-medium items-center bg-gradient-to-r ${
+                !isDarkModeEnabled
+                  ? "from-slate-200 to-slate-500"
+                  : "from-fuchsia-600 to-purple-800 text-fuchsia-950"
+              } rounded-md py-1 px-2 hover:bg-gradient-to-r hover:from-fuchsia-600 hover:to-purple-800 hover:text-white`}
+            >
+              {!isDarkModeEnabled ? (
+                <PiMoonStarsBold className="mr-1" />
+              ) : (
+                <PiMoonStarsFill className="mr-1" />
+              )}
+              Dark mode
+            </button>
           </div>
           <div>
             <input
