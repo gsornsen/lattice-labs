@@ -36,6 +36,13 @@ const Popup = () => {
     return () => clearInterval(intervalId);
   }, []);
 
+  // Get the current URL
+  useEffect(() => {
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      setCurrentURL(tabs[0].url);
+    });
+  }, []);
+
   const handleLightsChange = () => {
     setIsLightsEnabled((prevState) => {
       const newState = !prevState;
