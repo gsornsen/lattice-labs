@@ -3,6 +3,8 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import { BsTree } from "react-icons/bs";
 import { BsFillTreeFill } from "react-icons/bs";
+import { GiPumpkinMask } from "react-icons/gi";
+import { GiPumpkinLantern } from "react-icons/gi";
 import { PiMoonStarsBold } from "react-icons/pi";
 import { PiMoonStarsFill } from "react-icons/pi";
 
@@ -193,13 +195,13 @@ const Popup = () => {
               className={`flex flex-row font-medium items-center bg-gradient-to-r ${
                 !isSpookySeasonEnabled
                   ? "from-slate-200 to-slate-500"
-                  : "from-emerald-300 to-emerald-700 text-emerald-950"
-              } rounded-md py-1 px-2 hover:bg-gradient-to-r hover:from-emerald-300 hover:to-emerald-700 hover:text-white`}
+                  : "from-orange-300 to-yellow-700 text-red-950"
+              } rounded-md py-1 px-2 hover:bg-gradient-to-r hover:from-orange-300 hover:to-yellow-700 hover:text-white`}
             >
               {!isSpookySeasonEnabled ? (
-                <BsTree className="mr-1" />
+                <GiPumpkinLantern className="mr-1" />
               ) : (
-                <BsFillTreeFill className="mr-1" />
+                <GiPumpkinMask className="mr-1" />
               )}
               Spooky season
             </button>
