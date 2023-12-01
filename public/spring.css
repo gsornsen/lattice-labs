@@ -1,0 +1,25 @@
+.spring-flower {
+    position: fixed;
+    top: -10px;
+    z-index: 9999;
+    opacity: 0.8;
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+    animation: blow linear infinite;
+    clip-path: polygon(50% 0%, 73.59% 6.75%, 90% 25%, 94% 50%, 90% 75%, 86.02% 87.83%, 74.14% 94.13%, 50% 80%, 25.86% 94.13%, 13.98% 87.83%, 10% 75%, 5.75% 50%, 10% 25%, 17.25% 6.75%);
+    background-color: #000000;
+  }
+  
+  @keyframes blow {
+    0% { 
+      top: calc(var(--start-top, -10px)); /* Start from a custom top position */
+      right: calc(var(--start-left, -10%) + 100vw); /* Start from the left outside the viewport */
+      transform: rotate(-45deg); /* Initial rotation for diagonal movement */
+    }
+    100% {
+      top: 100%; 
+      right: calc(var(--start-left, -10%) - 10vw); /* Move outside the viewport from the right side */
+      transform: rotate(45deg); /* Final rotation for diagonal movement */
+    }
+  }

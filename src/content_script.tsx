@@ -1,4 +1,5 @@
 import { toggleChristmasLights } from './christmaslights/christmaslights';
+import { toggleSpringFlowers } from './springflowers/springflowers';
 import { toggleSpookySeason } from './spookyseason/spookyseason';
 import { toggleDarkMode } from "./darkmode/darkmode";
 import { traverseAndConvert } from "./bionic/bionic";
@@ -8,12 +9,13 @@ chrome.runtime.onMessage.addListener(function (msg: any, sender, sendResponse) {
   if (msg.type === "christmasLights") {
     toggleChristmasLights(msg.enable);
     sendResponse("Toggled Christmas lights");
-  }
-    else if (msg.type === 'spookySeason') {
-      toggleSpookySeason(msg.enable);
-      sendResponse('Toggled Spooky Season');
-  }
-  else if (msg.action === "addBionicReading") {
+  } else if (msg.type === 'springFlowers') {
+    toggleSpringFlowers(msg.enable);
+    sendResponse('Toggled Spring flowers');
+  } else if (msg.type === 'spookySeason') {
+    toggleSpookySeason(msg.enable);
+    sendResponse('Toggled Spooky Season');
+  } else if (msg.action === "addBionicReading") {
     sendResponse("Activated bionic reading");
     traverseAndConvert(document.body);
   } else if (msg.type === "darkMode") {
