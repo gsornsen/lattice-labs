@@ -36,8 +36,12 @@ Chrome Extension, TypeScript and Visual Studio Code
 
 ```
 npm install
+npm run build
 ```
 
+Navigate to `chrome://extensions/`, toggle "Developer mode" on. Click on "Load unpacked" then navigate to the repo and "Select". Toggle the "Lattice labs" extension on.
+
+While developing, you can run `npm run watch` and reload via `chrome://extensions/` to watch your changes
 ## Import as Visual Studio Code project
 
 ...

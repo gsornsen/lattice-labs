@@ -3,6 +3,8 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import { BsTree } from "react-icons/bs";
 import { BsFillTreeFill } from "react-icons/bs";
+import { GiPumpkinMask } from "react-icons/gi";
+import { GiPumpkinLantern } from "react-icons/gi";
 import { PiMoonStarsBold } from "react-icons/pi";
 import { PiMoonStarsFill } from "react-icons/pi";
 import { PiFlower } from "react-icons/pi";
@@ -16,17 +18,19 @@ const Popup = () => {
     useState<boolean>(false);
   const [isLightsEnabled, setIsLightsEnabled] = useState<boolean>(false);
   const [isSpringEnabled, setIsSpringEnabled] = useState<boolean>(false);
+  const [isSpookySeasonEnabled, setIsSpookySeasonEnabled] = useState<boolean>(false);
 
   // On component mount, load the saved state
   useEffect(() => {
     chrome.storage.sync.get(
-      ["christmasLights", "darkMode", "makePremium", "springFlowers"],
+      ["christmasLights", "darkMode", "makePremium", "springFlowers", "spookySeason"],
       (result) => {
         console.log(result);
         setIsLightsEnabled(result.christmasLights ?? false);
         setIsSpringEnabled(result.springFlowers ?? false);
         setIsDarkModeEnabled(result.darkMode ?? false);
         setIsMakePremiumEnabled(result.makePremium ?? false);
+        setIsSpookySeasonEnabled(result.spookySeason ?? false);
       }
     );
   }, []);
@@ -46,6 +50,24 @@ const Popup = () => {
       setCurrentURL(tabs[0].url);
     });
   }, []);
+
+  const handleSpookySeasonChange = () => {
+    setIsSpookySeasonEnabled((prevState) => {
+      const newState = !prevState;
+      chrome.storage.sync.set({ spookySeason: newState });
+
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        const tab = tabs[0];
+        if (tab.id) {
+          chrome.tabs.sendMessage(tab.id, {
+            type: "spookySeason",
+            enable: newState,
+          });
+        }
+      });
+      return newState;
+    });
+  };
 
   const handleLightsChange = () => {
     setIsLightsEnabled((prevState) => {
@@ -126,8 +148,8 @@ const Popup = () => {
           tab.id,
           { action: "addBionicReading" },
           function (response) {
-            console.log(response);
-          }
+          console.log(response);
+        }
         );
       }
     });
@@ -187,6 +209,23 @@ const Popup = () => {
                 <BsFillTreeFill className="mr-1" />
               )}
               Christmas lights
+            </button>
+          </div>
+          <div className="my-1">
+            <button
+              onClick={handleSpookySeasonChange}
+              className={`flex flex-row font-medium items-center bg-gradient-to-r ${
+                !isSpookySeasonEnabled
+                  ? "from-slate-200 to-slate-500"
+                  : "from-orange-300 to-yellow-700 text-red-950"
+              } rounded-md py-1 px-2 hover:bg-gradient-to-r hover:from-orange-300 hover:to-yellow-700 hover:text-white`}
+            >
+              {!isSpookySeasonEnabled ? (
+                <GiPumpkinLantern className="mr-1" />
+              ) : (
+                <GiPumpkinMask className="mr-1" />
+              )}
+              Spooky season
             </button>
           </div>
           <div className="my-1">
