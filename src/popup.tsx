@@ -235,11 +235,11 @@ const Popup = () => {
           <div className="my-1">
             <button
               onClick={handleSpringChange}
-              className={`flex flex-row font-medium items-center bg-gradient-to-r ${
+              className={`flex flex-row font-medium items-center border-2 bg-gradient-to-r ${
                 !isSpringEnabled
                   ? "from-slate-200 to-slate-500"
-                  : "from-lime-300 to-lime-700 text-teal-950"
-              } rounded-md py-1 px-2 hover:bg-gradient-to-r hover:from-lime-300 hover:to-lime-700 hover:text-white`}
+                  : "from-lime-300 to-lime-700 border-green-800 text-teal-950"
+              } rounded-md py-1 px-2 hover:bg-gradient-to-r hover:from-lime-300 hover:to-lime-700 hover:border-green-800 hover:text-white`}
             >
               {!isSpringEnabled ? (
                 <PiFlower className="mr-1" />
