@@ -20,6 +20,7 @@ chrome.runtime.onMessage.addListener(function (msg: any, sender, sendResponse) {
     toggleDarkMode(msg.enable);
     sendResponse("Toggled dark mode");
   } else if (msg.type === "makePremium") {
+    console.log("msg type was makePremium");
     toggleMakePremium(msg.enable);
     sendResponse("Toggled premium");
   } else {

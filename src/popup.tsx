@@ -7,6 +7,8 @@ import { GiPumpkinMask } from "react-icons/gi";
 import { GiPumpkinLantern } from "react-icons/gi";
 import { PiMoonStarsBold } from "react-icons/pi";
 import { PiMoonStarsFill } from "react-icons/pi";
+import { HiOutlineSparkles } from "react-icons/hi2";
+import { HiSparkles } from "react-icons/hi2";
 
 const Popup = () => {
   const [currentURL, setCurrentURL] = useState<string>();
@@ -22,7 +24,6 @@ const Popup = () => {
     chrome.storage.sync.get(
       ["christmasLights", "darkMode", "makePremium", "spookySeason"],
       (result) => {
-        console.log(result);
         setIsLightsEnabled(result.christmasLights ?? false);
         setIsDarkModeEnabled(result.darkMode ?? false);
         setIsMakePremiumEnabled(result.makePremium ?? false);
@@ -102,19 +103,22 @@ const Popup = () => {
     });
   };
 
-  const handlePremiumChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newState = event.target.checked;
-    setIsMakePremiumEnabled(newState);
-    chrome.storage.sync.set({ makePremium: newState });
+  const handlePremiumChange = () => {
+    setIsMakePremiumEnabled((prevState) => {
+      const newState = !prevState;
+      chrome.storage.sync.set({ makePremium: newState });
 
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      const tab = tabs[0];
-      if (tab.id) {
-        chrome.tabs.sendMessage(tab.id, {
-          type: "makePremium",
-          enable: newState,
-        });
-      }
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        const tab = tabs[0];
+        if (tab.id) {
+          chrome.tabs.sendMessage(tab.id, {
+            type: "makePremium",
+            enable: newState,
+          });
+        }
+      });
+
+      return newState;
     });
   };
 
@@ -172,14 +176,14 @@ const Popup = () => {
           </li>
         </ul>
         <div className="pt-4">
-          <div className="my-1">
+          <div className="my-2">
             <button
               onClick={handleLightsChange}
-              className={`flex flex-row font-medium items-center bg-gradient-to-r ${
+              className={`flex flex-row font-medium items-center border-2 bg-gradient-to-r ${
                 !isLightsEnabled
-                  ? "from-slate-200 to-slate-500"
-                  : "from-emerald-300 to-emerald-700 text-emerald-950"
-              } rounded-md py-1 px-2 hover:bg-gradient-to-r hover:from-emerald-300 hover:to-emerald-700 hover:text-white`}
+                  ? "from-slate-200 to-slate-500 border-slate-500"
+                  : "from-emerald-300 to-emerald-700 border-emerald-800 text-emerald-950"
+              } rounded-md py-1 px-2 hover:bg-gradient-to-r hover:from-emerald-300 hover:to-emerald-700 hover:border-emerald-800 hover:text-white `}
             >
               {!isLightsEnabled ? (
                 <BsTree className="mr-1" />
@@ -189,14 +193,14 @@ const Popup = () => {
               Christmas lights
             </button>
           </div>
-          <div className="my-1">
+          <div className="my-2">
             <button
               onClick={handleSpookySeasonChange}
-              className={`flex flex-row font-medium items-center bg-gradient-to-r ${
+              className={`flex flex-row font-medium items-center border-2 bg-gradient-to-r ${
                 !isSpookySeasonEnabled
-                  ? "from-slate-200 to-slate-500"
-                  : "from-orange-300 to-yellow-700 text-red-950"
-              } rounded-md py-1 px-2 hover:bg-gradient-to-r hover:from-orange-300 hover:to-yellow-700 hover:text-white`}
+                  ? "from-slate-200 to-slate-500 border-slate-500"
+                  : "from-orange-300 to-yellow-700 border-yellow-800 text-red-950"
+              } rounded-md py-1 px-2 hover:bg-gradient-to-r hover:from-orange-300 hover:to-yellow-700 hover:border-yellow-800 hover:text-white`}
             >
               {!isSpookySeasonEnabled ? (
                 <GiPumpkinLantern className="mr-1" />
@@ -209,11 +213,11 @@ const Popup = () => {
           <div className="my-1">
             <button
               onClick={handleModeChange}
-              className={`flex flex-row font-medium items-center bg-gradient-to-r ${
+              className={`flex flex-row font-medium items-center border-2 bg-gradient-to-r ${
                 !isDarkModeEnabled
-                  ? "from-slate-200 to-slate-500"
-                  : "from-fuchsia-600 to-purple-800 text-fuchsia-950"
-              } rounded-md py-1 px-2 hover:bg-gradient-to-r hover:from-fuchsia-600 hover:to-purple-800 hover:text-white`}
+                  ? "from-slate-200 to-slate-500 border-slate-500"
+                  : "from-fuchsia-600 to-purple-800 border-fuchsia-800 text-fuchsia-950"
+              } rounded-md py-1 px-2 hover:bg-gradient-to-r hover:from-fuchsia-600 hover:to-purple-800 hover:border-fuchsia-800 hover:text-white`}
             >
               {!isDarkModeEnabled ? (
                 <PiMoonStarsBold className="mr-1" />
@@ -223,14 +227,22 @@ const Popup = () => {
               Dark mode
             </button>
           </div>
-          <div>
-            <input
-              type="checkbox"
-              id="makePremiumEnabledCheckbox"
-              checked={isMakePremiumEnabled}
-              onChange={handlePremiumChange}
-            />
-            <label htmlFor="makePremiumEnabledCheckbox"> Make premium</label>
+          <div className="my-2">
+            <button
+              onClick={handlePremiumChange}
+              className={`flex flex-row font-medium items-center border-2 bg-gradient-to-r ${
+                !isMakePremiumEnabled
+                  ? "from-slate-200 to-slate-500 border-slate-500"
+                  : "from-yellow-300 via-orange-500 to-rose-600 border-rose-700 text-orange-800"
+              } rounded-md py-1 px-2 hover:bg-gradient-to-r hover:from-yellow-300 hover:via-orange-500 hover:to-rose-600 hover:border-rose-700 hover:text-white`}
+            >
+              {!isMakePremiumEnabled ? (
+                <HiOutlineSparkles className="mr-1" />
+              ) : (
+                <HiSparkles className="mr-1" />
+              )}
+              Make premium
+            </button>
           </div>
           <div>
             <button onClick={addBionicReading}> Enable bionic reading</button>
