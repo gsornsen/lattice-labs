@@ -196,11 +196,11 @@ const Popup = () => {
           <div className="my-2">
             <button
               onClick={handleSpookySeasonChange}
-              className={`flex flex-row font-medium items-center bg-gradient-to-r ${
+              className={`flex flex-row font-medium items-center border-2 bg-gradient-to-r ${
                 !isSpookySeasonEnabled
-                  ? "from-slate-200 to-slate-500"
-                  : "from-orange-300 to-yellow-700 text-red-950"
-              } rounded-md py-1 px-2 hover:bg-gradient-to-r hover:from-orange-300 hover:to-yellow-700 hover:text-white`}
+                  ? "from-slate-200 to-slate-500 border-slate-500"
+                  : "from-orange-300 to-yellow-700 border-yellow-800 text-red-950"
+              } rounded-md py-1 px-2 hover:bg-gradient-to-r hover:from-orange-300 hover:to-yellow-700 hover:border-yellow-800 hover:text-white`}
             >
               {!isSpookySeasonEnabled ? (
                 <GiPumpkinLantern className="mr-1" />
